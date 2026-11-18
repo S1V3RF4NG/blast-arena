@@ -1,0 +1,14 @@
+{
+  "name": "blast-arena",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node test/game-test.js",
+    "build": "node --check netlify/functions/game.js && node --check lib/game-core.js"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.7.13"
+  },
+  "devDependencies": {}
+}
