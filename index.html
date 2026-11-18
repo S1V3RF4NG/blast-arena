@@ -6,8 +6,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 :root{--bg:#080d20;--panel:#111b35;--line:#33456f;--cyan:#42d9ff;--pink:#ff4d86;--yellow:#ffe45c;--green:#8cff6b}
-*{box-sizing:border-box}body{margin:0;color:#e9f5ff;background-color:var(--bg);background-image:radial-gradient(#24375e 1px,transparent 1px),linear-gradient(transparent 50%,#0002 50%);background-size:22px 22px,100% 4px;font-family:'VT323',monospace;font-size:22px;min-height:100vh}
-body:after{content:"";pointer-events:none;position:fixed;inset:0;background:repeating-linear-gradient(0deg,#0000 0 2px,#0002 3px 4px);opacity:.24;z-index:9}
+*{box-sizing:border-box}body{margin:0;color:#e9f5ff;background:radial-gradient(circle at 50% 0%, #1b2847 0%, #0b1121 75%);font-family:'VT323',monospace;font-size:22px;min-height:100vh}
 button,input{font:inherit}button{cursor:pointer;color:#fff;background:#1c2a4b;border:2px solid #526b9e;padding:10px 13px;box-shadow:3px 3px 0 #050915;transition:transform .08s}button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #050915}button.primary{background:#a42b60;border-color:#ff78a7}button:disabled{opacity:.45;cursor:not-allowed}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:1200px;margin:auto;padding:16px 18px;border-bottom:2px solid var(--line)}
 .logo{font:16px 'Press Start 2P';color:var(--yellow);text-shadow:3px 3px #9c3b52;letter-spacing:-1px}.logo small{display:block;font:12px 'VT323';color:var(--cyan);letter-spacing:3px;margin-top:8px}
@@ -66,9 +65,9 @@ $('touchBomb').addEventListener('pointerdown',e=>{e.preventDefault();send(null,t
 /* Tiny synthesized arcade soundtrack: user gesture unlocks Web Audio. */
 let audio=null,musicOn=true,sfxOn=true,master=null,musicTimer=null,stepThrottle=0;
 function audioStart(){if(!audio){audio=new(window.AudioContext||window.webkitAudioContext)();master=audio.createGain();master.gain.value=.14;master.connect(audio.destination);}if(audio.state==='suspended')audio.resume();if(musicOn&&!musicTimer)music();}
-const melody=[659,784,988,784,587,659,784,659,523,659,784,659,494,587,659,587],bass=[131,131,165,165,110,110,147,147];let beat=0;
+const melody=[330,392,440,392,294,330,392,349,262,330,392,349,247,294,330,294],bass=[82,82,98,98,73,73,87,87];let beat=0;
 function tone(freq,dur,wave='square',vol=.12,delay=0){if(!audio)return;const o=audio.createOscillator(),g=audio.createGain();o.type=wave;o.frequency.value=freq;g.gain.setValueAtTime(.0001,audio.currentTime+delay);g.gain.exponentialRampToValueAtTime(vol,audio.currentTime+delay+.012);g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+delay+dur);o.connect(g);g.connect(master);o.start(audio.currentTime+delay);o.stop(audio.currentTime+delay+dur+.03);}
-function music(){if(!audio||!musicOn)return;const n=beat++%16;tone(melody[n],.14,'square',.055);if(n%2===0)tone(bass[(n/2)%8],.22,'triangle',.055);musicTimer=setTimeout(music,175);}
+function music(){if(!audio||!musicOn)return;const n=beat++%16;tone(melody[n],.27,'sine',.038);if(n%2===0)tone(bass[(n/2)%8],.29,'triangle',.075);musicTimer=setTimeout(music,310);}
 function sfx(kind){if(!audio||!sfxOn)return;const now=audio.currentTime;if(kind==='step'){if(now-stepThrottle<.12)return;stepThrottle=now;tone(180,.035,'square',.025);}if(kind==='bomb')tone(240,.18,'square',.12);if(kind==='boom'){[110,82,55].forEach((f,i)=>tone(f,.22,'sawtooth',.15,i*.035));}if(kind==='power'){[523,659,784,1047].forEach((f,i)=>tone(f,.12,'square',.1,i*.07));}}
 function victory(){if(!audio)return;[523,659,784,1047,1318].forEach((f,i)=>tone(f,.3,'square',.11,i*.12));}
 $('musicBtn').onclick=()=>{musicOn=!musicOn;$('musicBtn').textContent='♫ MUSIC: '+(musicOn?'ON':'OFF');if(musicOn){audioStart();}else{clearTimeout(musicTimer);musicTimer=null;}};
